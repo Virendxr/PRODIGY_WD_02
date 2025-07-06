@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stopwatch</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/icon.png" type="image/png">
+
+</head>
+<body>
+    <div id="display">00:00:00</div>
+
+    <div>
+        <button onclick="startSound.play(); startStopwatch()">Start</button>
+        <button onclick="stopSound.play(); stopStopwatch()">Stop</button>
+        <button onclick="resetSound.play(); resetStopwatch()">Reset</button>
+        <button onclick="lapSound.play(); recordLap()">Lap</button>
+    </div>
+
+    <div id="lapsList"></div>
+
+    <audio id="startSound" src="assets/start.mp3" preload="auto"></audio>
+    <audio id="stopSound" src="assets/stop.mp3" preload="auto"></audio>
+    <audio id="resetSound" src="assets/reset.mp3" preload="auto"></audio>
+    <audio id="lapSound" src="assets/lap.mp3" preload="auto"></audio>
+    <audio id="tickSound" src="assets/tick.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
+    <script>
+        const startSound = document.getElementById("startSound");
+        const stopSound = document.getElementById("stopSound");
+        const resetSound = document.getElementById("resetSound");
+        const lapSound = document.getElementById("lapSound");
+        const tickSound = document.getElementById("tickSound");
+
+        function startStopwatch() {
+            if (!running) {
+                startTime = new Date().getTime() - (difference || 0);
+                interval = setInterval(updateTime, 10);
+                running = true;
+
+                tickSound.loop = true;
+                tickSound.currentTime = 0;
+                tickSound.play().catch(() => {});
+            }
+        }
+
+        function stopStopwatch() {
+            if (running) {
+                clearInterval(interval);
+                running = false;
+                difference = new Date().getTime() - startTime;
+
+                stopTickSound();
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(interval);
+            running = false;
+            document.getElementById("display").innerText = "00:00:00";
+            document.getElementById("lapsList").innerHTML = "";
+            difference = 0;
+            laps = [];
+
+            stopTickSound();
+        }
+
+        function stopTickSound() {
+            tickSound.pause();
+            tickSound.currentTime = 0;
+        }
+    </script>
+</body>
+</html>
